@@ -1,0 +1,61 @@
+package com.certification.service;
+
+import com.certification.dto.CertificationRequest;
+import com.certification.exception.ResourceNotFoundException;
+import com.certification.model.Certification;
+import com.certification.repository.CertificationRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import java.util.List;
+
+@Service
+public class CertificationService {
+
+    @Autowired
+    private CertificationRepository certificationRepository;
+
+    public List<Certification> getAll() {
+        return certificationRepository.findAll();
+    }
+
+    public Certification getById(Long id) {
+        return certificationRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Certification not found"));
+    }
+
+    public Certification create(CertificationRequest request) {
+        if (certificationRepository.existsByName(request.getName())) {
+            throw new RuntimeException("Certification already exists");
+        }
+
+        Certification cert = Certification.builder()
+                .name(request.getName())
+                .authority(request.getAuthority())
+                .category(request.getCategory())
+                .validityMonths(request.getValidityMonths())
+                .prerequisites(request.getPrerequisites())
+                .build();
+
+        return certificationRepository.save(cert);
+    }
+
+    public Certification update(Long id, CertificationRequest request) {
+        Certification existing = certificationRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Certification not found"));
+
+        existing.setName(request.getName());
+        existing.setAuthority(request.getAuthority());
+        existing.setCategory(request.getCategory());
+        existing.setValidityMonths(request.getValidityMonths());
+        existing.setPrerequisites(request.getPrerequisites());
+
+        return certificationRepository.save(existing);
+    }
+
+    public void delete(Long id) {
+        Certification cert = certificationRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Certification not found"));
+        certificationRepository.delete(cert);
+    }
+}

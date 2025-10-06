@@ -1,0 +1,140 @@
+package com.certification.service;
+
+import java.time.LocalDate;
+import java.util.List;
+
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import com.certification.dto.request.GoalCreateRequest;
+import com.certification.dto.request.GoalUpdateRequest;
+import com.certification.dto.request.ProgressUpdateRequest;
+import com.certification.dto.response.GoalResponse;
+import com.certification.exception.BadRequestException;
+import com.certification.exception.ResourceNotFoundException;
+import com.certification.model.Certification;
+import com.certification.model.CertificationGoal;
+import com.certification.model.GoalStatus;
+import com.certification.model.User;
+import com.certification.repository.CertificationGoalRepository;
+import com.certification.repository.CertificationRepository;
+import com.certification.repository.UserRepository;
+
+@Service
+public class GoalService {
+
+    private final CertificationGoalRepository goalRepo;
+    private final CertificationRepository certRepo;
+    private final UserRepository userRepo;
+
+    public GoalService(CertificationGoalRepository goalRepo,
+                       CertificationRepository certRepo,
+                       UserRepository userRepo) {
+        this.goalRepo = goalRepo;
+        this.certRepo = certRepo;
+        this.userRepo = userRepo;
+    }
+
+    private User getUser(String username) {
+        return userRepo.findByUsername(username)
+                .orElseThrow(() -> new ResourceNotFoundException("User not found: " + username));
+    }
+
+    @Transactional
+    public GoalResponse createGoal(String username, GoalCreateRequest req) {
+        User employee = getUser(username);
+        Certification cert = certRepo.findById(req.getCertificationId())
+                .orElseThrow(() -> new ResourceNotFoundException("Certification not found: " + req.getCertificationId()));
+
+        if (req.getTargetDate().isBefore(LocalDate.now().plusDays(1))) {
+            throw new BadRequestException("Target date must be in the future");
+        }
+
+        CertificationGoal goal = CertificationGoal.builder()
+                .employee(employee)
+                .certification(cert)
+                .targetDate(req.getTargetDate())
+                .notes(req.getNotes())
+                .status(GoalStatus.PLANNED)
+                .progressPercent(0)
+                .build();
+
+        CertificationGoal saved = goalRepo.save(goal);
+        return toResponse(saved);
+    }
+
+    public List<GoalResponse> listMyGoals(String username) {
+        return goalRepo.findByEmployee_UsernameOrderByCreatedAtDesc(username)
+                .stream().map(this::toResponse).toList();
+    }
+
+    public GoalResponse getMine(String username, Long id) {
+        CertificationGoal goal = getOwnedGoal(username, id);
+        return toResponse(goal);
+    }
+
+    @Transactional
+    public GoalResponse updateGoal(String username, Long id, GoalUpdateRequest req) {
+        CertificationGoal goal = getOwnedGoal(username, id);
+
+        if (req.getTargetDate() != null) {
+            if (req.getTargetDate().isBefore(LocalDate.now().plusDays(1))) {
+                throw new BadRequestException("Target date must be in the future");
+            }
+            goal.setTargetDate(req.getTargetDate());
+        }
+        if (req.getNotes() != null) {
+            goal.setNotes(req.getNotes());
+        }
+        if (req.getStatus() != null) {
+            goal.setStatus(req.getStatus());
+        }
+
+        return toResponse(goalRepo.save(goal));
+    }
+
+    @Transactional
+    public GoalResponse updateProgress(String username, Long id, ProgressUpdateRequest req) {
+        CertificationGoal goal = getOwnedGoal(username, id);
+
+        int p = req.getProgressPercent();
+        goal.setProgressPercent(p);
+        if (p >= 100) {
+            goal.setStatus(GoalStatus.COMPLETED);
+        } else if (p > 0) {
+            goal.setStatus(GoalStatus.IN_PROGRESS);
+        } else if (LocalDate.now().isAfter(goal.getTargetDate())) {
+            goal.setStatus(GoalStatus.PAST_DUE);
+        } else if (goal.getStatus() == GoalStatus.CANCELLED) {
+            
+        } else {
+            goal.setStatus(GoalStatus.PLANNED);
+        }
+
+        return toResponse(goalRepo.save(goal));
+    }
+
+    private CertificationGoal getOwnedGoal(String username, Long id) {
+        CertificationGoal goal = goalRepo.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Goal not found: " + id));
+        if (!goal.getEmployee().getUsername().equals(username)) {
+            throw new BadRequestException("You can access only your own goals");
+        }
+        return goal;
+    }
+
+    private GoalResponse toResponse(CertificationGoal g) {
+        return GoalResponse.builder()
+                .id(g.getId())
+                .certificationId(g.getCertification().getId())
+                .certificationName(g.getCertification().getName())
+                .certificationAuthority(g.getCertification().getAuthority())
+                .category(g.getCertification().getCategory())
+                .subcategory(g.getCertification().getSubcategory())
+                .targetDate(g.getTargetDate())
+                .notes(g.getNotes())
+                .status(g.getStatus())
+                .progressPercent(g.getProgressPercent())
+                .build();
+    }
+}

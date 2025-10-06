@@ -1,0 +1,76 @@
+package com.certification.config;
+
+import com.certification.model.*;
+import com.certification.repository.*;
+import org.springframework.boot.CommandLineRunner;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.security.crypto.password.PasswordEncoder;
+
+@Configuration
+public class DataInitializer {
+
+    @Bean
+    public CommandLineRunner seedData(
+            CertificationRepository certs,
+            UserRepository users,
+            PasswordEncoder encoder
+    ) {
+        return args -> {
+            if (certs.count() == 0) {
+                certs.save(new Certification(
+                        "AWS Certified Cloud Practitioner",
+                        "Amazon Web Services",
+                        "Cloud",
+                        36,
+                        "Basic cloud knowledge"
+                ));
+                certs.save(new Certification(
+                        "Microsoft Azure Fundamentals (AZ-900)",
+                        "Microsoft",
+                        "Cloud",
+                        36,
+                        "Basic Azure knowledge"
+                ));
+                certs.save(new Certification(
+                        "Oracle Java SE 11 Developer",
+                        "Oracle",
+                        "Programming",
+                        36,
+                        "Strong Java basics"
+                ));
+            }
+
+            if (users.count() == 0) {
+                users.save(new User(
+                        "admin",                        // username
+                        "Admin User",                   // name
+                        "admin@company.com",            // email
+                        encoder.encode("Admin@123"),    // password
+                        Role.ADMIN						//role
+                ));
+                users.save(new User(
+                        "employee",
+                        "Employee One",
+                        "employee@company.com",
+                        encoder.encode("Employee@123"),
+                        Role.EMPLOYEE
+                ));
+                users.save(new User(
+                        "approver",
+                        "Approver SPOC",
+                        "approver@company.com",
+                        encoder.encode("Approver@123"),
+                        Role.APPROVER
+                ));
+                users.save(new User(
+                        "manager",
+                        "Manager One",
+                        "manager@company.com",
+                        encoder.encode("Manager@123"),
+                        Role.MANAGER
+                ));
+            }
+        };
+    }
+}

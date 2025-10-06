@@ -1,0 +1,54 @@
+package com.certification.controller;
+
+import com.certification.model.Certification;
+import com.certification.service.CertificationService;
+import jakarta.validation.Valid;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.*;
+
+import java.net.URI;
+import java.util.List;
+
+@RestController
+@RequestMapping("/api/certifications")
+public class CertificationController {
+
+    private final CertificationService service;
+
+    public CertificationController(CertificationService service) {
+        this.service = service;
+    }
+
+    @GetMapping
+    @PreAuthorize("hasAnyRole('EMPLOYEE','MANAGER','APPROVER','ADMIN')")
+    public ResponseEntity<List<Certification>> getAll() {
+        return ResponseEntity.ok(service.getAll());
+    }
+
+    @GetMapping("/{id}")
+    @PreAuthorize("hasAnyRole('EMPLOYEE','MANAGER','APPROVER','ADMIN')")
+    public ResponseEntity<Certification> getById(@PathVariable Long id) {
+        return ResponseEntity.ok(service.getById(id));
+    }
+
+    @PostMapping
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<Certification> create(@Valid @RequestBody Certification c) {
+        Certification created = service.create(c);
+        return ResponseEntity.created(URI.create("/api/certifications/" + created.getId())).body(created);
+    }
+
+    @PutMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<Certification> update(@PathVariable Long id, @Valid @RequestBody Certification c) {
+        return ResponseEntity.ok(service.update(id, c));
+    }
+
+    @DeleteMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<Void> delete(@PathVariable Long id) {
+        service.delete(id);
+        return ResponseEntity.noContent().build();
+    }
+}

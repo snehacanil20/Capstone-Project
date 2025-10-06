@@ -1,0 +1,38 @@
+package com.certification.scheduler;
+
+import com.certification.model.GoalStatus;
+import com.certification.model.CertificationGoal;
+import com.certification.repository.CertificationGoalRepository;
+import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.stereotype.Component;
+
+import java.time.LocalDate;
+import java.util.EnumSet;
+import java.util.List;
+
+@Component
+public class ReminderScheduler {
+
+    private final CertificationGoalRepository repo;
+
+    public ReminderScheduler(CertificationGoalRepository repo) {
+        this.repo = repo;
+    }
+
+    // Runs every minute
+    @Scheduled(cron = "0 * * * * *")
+    public void dueDateReminders() {
+        // D-14 / D-7 / D-1 / D-0 (today)
+        int[] offsets = {14, 7, 1, 0};
+        var active = EnumSet.of(GoalStatus.PLANNED, GoalStatus.IN_PROGRESS);
+
+        for (int d : offsets) {
+            LocalDate date = LocalDate.now().plusDays(d);
+            List<CertificationGoal> goals = repo.findByStatusInAndTargetDate(active.stream().toList(), date);
+            goals.forEach(g ->
+                System.out.printf("[Reminder] %s: \"%s\" due in %d day(s) for user %s%n",
+                    g.getTargetDate(), g.getCertification().getName(), d, g.getEmployee().getUsername())
+            );
+        }
+    }
+}

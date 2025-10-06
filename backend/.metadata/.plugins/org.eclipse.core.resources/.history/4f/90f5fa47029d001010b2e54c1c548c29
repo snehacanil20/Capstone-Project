@@ -1,0 +1,54 @@
+package com.certification.service;
+
+import com.certification.dto.CertificationRequest;
+import com.certification.dto.CertificationResponse;
+import com.certification.model.Certification;
+import com.certification.repository.CertificationRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import java.util.List;
+import java.util.stream.Collectors;
+
+@Service
+public class CertificationService {
+
+    @Autowired
+    private CertificationRepository certificationRepository;
+
+    public CertificationResponse createCertificate(CertificationRequest requestDTO) {
+        Certification certification = new Certification(
+                requestDTO.getName(),
+                requestDTO.getAuthority(),
+                requestDTO.getCategory(),
+                requestDTO.getValidityMonths(),
+                requestDTO.getPrerequisites()
+        );
+        Certification saved = certificationRepository.save(certification);
+        return mapToResponseDTO(saved);
+    }
+
+    public List<CertificationResponse> getAllCertificates() {
+        return certificationRepository.findAll()
+                .stream()
+                .map(this::mapToResponseDTO)
+                .collect(Collectors.toList());
+    }
+
+    public CertificationResponse getCertificateById(Long id) {
+        Certification certification = certificationRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Certificate not found"));
+        return mapToResponseDTO(certification);
+    }
+
+    private CertificationResponse mapToResponseDTO(Certification certification) {
+    	CertificationResponse dto = new CertificationResponse();
+        dto.setId(certification.getId());
+        dto.setName(certification.getName());
+        dto.setAuthority(certification.getAuthority());
+        dto.setCategory(certification.getCategory());
+        dto.setValidityMonths(certification.getValidityMonths());
+        dto.setPrerequisites(certification.getPrerequisites());
+        return dto;
+    }
+}

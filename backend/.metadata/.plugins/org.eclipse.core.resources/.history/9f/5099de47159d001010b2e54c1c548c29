@@ -1,0 +1,83 @@
+package com.certification.dto;
+
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
+
+public class CertificationRequest {
+
+	@NotBlank
+	@Size(max = 150)
+	private String name;
+
+	@NotBlank
+	@Size(max = 100)
+	private String authority;
+
+	@NotBlank
+	@Size(max = 100)
+	private String category;
+
+	@Min(1)
+	@Max(120)
+	private int validityMonths;
+
+	@Size(max = 200)
+	private String prerequisites;
+
+	public CertificationRequest() {
+		super();
+		// TODO Auto-generated constructor stub
+	}
+
+	public CertificationRequest(String name, String authority, String category, int validityMonths, String prerequisites) {
+		super();
+		this.name = name;
+		this.authority = authority;
+		this.category = category;
+		this.validityMonths = validityMonths;
+		this.prerequisites = prerequisites;
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	public String getAuthority() {
+		return authority;
+	}
+
+	public void setAuthority(String authority) {
+		this.authority = authority;
+	}
+
+	public String getCategory() {
+		return category;
+	}
+
+	public void setCategory(String category) {
+		this.category = category;
+	}
+
+	public int getValidityMonths() {
+		return validityMonths;
+	}
+
+	public void setValidityMonths(int validityMonths) {
+		this.validityMonths = validityMonths;
+	}
+
+	public String getPrerequisites() {
+		return prerequisites;
+	}
+
+	public void setPrerequisites(String prerequisites) {
+		this.prerequisites = prerequisites;
+	}
+
+}

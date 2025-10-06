@@ -1,0 +1,5 @@
+package com.certification.model;
+
+public enum GoalStatus {
+
+}

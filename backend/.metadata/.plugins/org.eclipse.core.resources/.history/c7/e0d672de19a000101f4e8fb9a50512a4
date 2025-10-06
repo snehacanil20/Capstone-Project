@@ -1,0 +1,44 @@
+package com.certification.scheduler;
+
+import com.certification.model.GoalStatus;
+import com.certification.model.CertificationGoal;
+import com.certification.repository.CertificationGoalRepository;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.stereotype.Component;
+
+import java.time.LocalDate;
+import java.util.EnumSet;
+import java.util.List;
+
+@Slf4j
+@Component
+public class ReminderScheduler {
+
+    private final CertificationGoalRepository repo;
+
+    public ReminderScheduler(CertificationGoalRepository repo) {
+        this.repo = repo;
+    }
+
+
+    @Scheduled(cron = "0 * * * * *")
+    public void dueDateReminders() {
+        int[] offsets = {14, 7, 1, 0};
+        var active = EnumSet.of(GoalStatus.PLANNED, GoalStatus.IN_PROGRESS);
+
+        for (int d : offsets) {
+            LocalDate date = LocalDate.now().plusDays(d);
+            List<CertificationGoal> goals =
+                    repo.findActiveDueGoalsWithJoins(active, date); // fetch-joined to avoid LazyInitializationException
+
+            for (CertificationGoal g : goals) {
+                log.info("[Reminder] {}: \"{}\" due in {} day(s) for user {}",
+                        g.getTargetDate(),
+                        g.getCertification().getName(),
+                        d,
+                        g.getEmployee().getUsername());
+            }
+        }
+    }
+}

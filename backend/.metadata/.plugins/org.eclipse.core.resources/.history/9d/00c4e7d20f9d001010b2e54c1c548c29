@@ -1,0 +1,84 @@
+package com.certification.config;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.CommandLineRunner;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.security.crypto.password.PasswordEncoder;
+
+import com.certification.model.Certification;
+import com.certification.model.Role;
+import com.certification.model.User;
+import com.certification.repository.CertificationRepository;
+import com.certification.repository.UserRepository;
+
+@Configuration
+public class DataInitializer implements CommandLineRunner {
+
+    @Autowired
+    private CertificationRepository certs;
+
+    @Autowired
+    private UserRepository users;
+
+    @Autowired
+    private PasswordEncoder encoder;
+
+    @Override
+    public void run(String... args) throws Exception {
+        certs.save(Certification.builder()
+                .name("AWS Certified Cloud Practitioner")
+                .authority("Amazon Web Services")
+                .category("Cloud")
+                .validityMonths(36)
+                .prerequisites("Basic cloud knowledge")
+                .build());
+
+        certs.save(Certification.builder()
+                .name("Microsoft Certified: Azure Fundamentals")
+                .authority("Microsoft")
+                .category("Cloud")
+                .validityMonths(24)
+                .prerequisites("None")
+                .build());
+
+        certs.save(Certification.builder()
+                .name("Google Associate Cloud Engineer")
+                .authority("Google Cloud")
+                .category("Cloud")
+                .validityMonths(36)
+                .prerequisites("Hands-on experience with GCP")
+                .build());
+
+        users.save(User.builder()
+                .username("admin")
+                .name("Admin User")
+                .email("admin@company.com")
+                .password(encoder.encode("Admin@123"))
+                .role(Role._ADMIN_)
+                .build());
+
+        users.save(User.builder()
+                .username("manager")
+                .name("Manager User")
+                .email("manager@company.com")
+                .password(encoder.encode("Manager@123"))
+                .role(Role._MANAGER_)
+                .build());
+
+        users.save(User.builder()
+                .username("employee")
+                .name("Employee User")
+                .email("employee@company.com")
+                .password(encoder.encode("Employee@123"))
+                .role(Role._EMPLOYEE_)
+                .build());
+
+        users.save(User.builder()
+                .username("guest")
+                .name("Guest User")
+                .email("guest@company.com")
+                .password(encoder.encode("Guest@123"))
+                .role(Role._GUEST_)
+                .build());
+    }
+}

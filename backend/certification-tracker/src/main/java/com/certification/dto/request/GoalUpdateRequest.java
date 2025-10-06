@@ -1,0 +1,16 @@
+package com.certification.dto.request;
+
+import com.certification.model.GoalStatus;
+import jakarta.validation.constraints.*;
+import lombok.Data;
+
+@Data
+public class GoalUpdateRequest {
+    @Future(message = "Target date must be in the future")
+    private java.time.LocalDate targetDate;
+
+    @Size(max = 500)
+    private String notes;
+
+    private GoalStatus status; 
+}

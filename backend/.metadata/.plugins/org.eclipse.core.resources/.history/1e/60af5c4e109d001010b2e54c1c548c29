@@ -1,0 +1,54 @@
+package com.certification.service;
+
+import com.certification.dto.RegisterRequest;
+import com.certification.exception.ConflictException;
+import com.certification.model.User;
+import com.certification.repository.UserRepository;
+import com.certification.security.JwtUtil;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Service;
+
+@Service
+public class AuthService {
+
+    @Autowired
+    private UserRepository userRepository;
+
+    @Autowired
+    private PasswordEncoder encoder;
+
+    @Autowired
+    private JwtUtil jwtUtil;
+
+    public String register(RegisterRequest request) {
+        if (userRepository.existsByUsername(request.getUsername())) {
+            throw new ConflictException("Username already exists");
+        }
+        if (userRepository.existsByEmail(request.getEmail())) {
+            throw new ConflictException("Email already exists");
+        }
+
+        User user = User.builder()
+                .name(request.getName())
+                .username(request.getUsername())
+                .email(request.getEmail())
+                .password(encoder.encode(request.getPassword()))
+                .role(request.getRole())
+                .build();
+
+        userRepository.save(user);
+        return "User registered successfully";
+    }
+
+    public String login(com.certification.dto.LoginRequest request) {
+        User user = userRepository.findByUsername(request.getUsername())
+                .orElseThrow(() -> new RuntimeException("Invalid username or password"));
+
+        if (!encoder.matches(request.getPassword(), user.getPassword())) {
+            throw new RuntimeException("Invalid username or password");
+        }
+
+        return jwtUtil.generateToken(user.getUsername(), user.getId(), user.getRole().name());
+    }
+}

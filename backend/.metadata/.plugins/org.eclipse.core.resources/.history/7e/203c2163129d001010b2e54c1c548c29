@@ -1,0 +1,51 @@
+package com.certification.service;
+
+import com.certification.model.Certification;
+import com.certification.repository.CertificationRepository;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
+
+@Service
+public class CertificationService {
+
+    private final CertificationRepository repo;
+
+    public CertificationService(CertificationRepository repo) { this.repo = repo; }
+
+    public List<Certification> getAll() { return repo.findAll(); }
+
+    public Certification getById(Long id) {
+        return repo.findById(id).orElseThrow(() -> new IllegalArgumentException("Certification not found: " + id));
+    }
+
+    @Transactional
+    public Certification create(Certification c) {
+        if (repo.existsByName(c.getName())) {
+            throw new IllegalArgumentException("Certification with the same name already exists.");
+        }
+        return repo.save(c);
+    }
+
+    @Transactional
+    public Certification update(Long id, Certification updated) {
+        Certification existing = getById(id);
+        if (!existing.getName().equalsIgnoreCase(updated.getName())
+                && repo.existsByName(updated.getName())) {
+            throw new IllegalArgumentException("Another certification with the same name exists.");
+        }
+        existing.setName(updated.getName());
+        existing.setAuthority(updated.getAuthority());
+        existing.setCategory(updated.getCategory());
+        existing.setValidityMonths(updated.getValidityMonths());
+        existing.setPrerequisites(updated.getPrerequisites());
+        return repo.save(existing);
+    }
+
+    @Transactional
+    public void delete(Long id) {
+        Certification existing = getById(id);
+        repo.delete(existing);
+    }
+}

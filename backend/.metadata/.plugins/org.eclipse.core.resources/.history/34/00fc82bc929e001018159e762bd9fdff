@@ -1,0 +1,17 @@
+package com.certification.repository;
+
+import com.certification.model.CertificationGoal;
+import com.certification.model.GoalStatus;
+import org.springframework.data.jpa.repository.JpaRepository;
+
+import java.time.LocalDate;
+import java.util.List;
+
+public interface CertificationGoalRepository extends JpaRepository<CertificationGoal, Long> {
+
+    // All goals owned by username (via employee.username)
+    List<CertificationGoal> findByEmployee_UsernameOrderByCreatedAtDesc(String username);
+
+    // Due within a specific date (for reminders)
+    List<CertificationGoal> findByStatusInAndTargetDate(List<GoalStatus> statuses, LocalDate targetDate);
+}
