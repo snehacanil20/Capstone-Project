@@ -1,0 +1,355 @@
+/* ===== Base (Week 1) ===== */
+body {
+  margin: 0;
+  font-family: 'Segoe UI', sans-serif;
+  background-color: #F9F6F2;
+  color: #254b03;
+}
+
+.page-content {
+  padding: 2rem;
+  max-width: 1200px;
+  margin: auto;
+}
+
+.welcome-fullscreen {
+  background: url('http://localhost:8080/api/images/welcome-banner') no-repeat center center;
+  background-size: cover;
+  height: 100vh;
+  width: 100vw;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+  overflow: hidden;
+}
+
+.welcome-overlay {
+  text-align: center;
+  color: rgb(49, 63, 3);
+  background-color: rgba(214, 236, 179, 0.6);
+  padding: 3rem;
+  border-radius: 12px;
+  max-width: 700px;
+  width: 90%;
+}
+
+.welcome-title {
+  font-size: 3rem;
+  margin-bottom: 1rem;
+  font-weight: bold;
+}
+
+.welcome-subtitle {
+  font-size: 1.2rem;
+  margin-bottom: 2rem;
+}
+
+.welcome-cta {
+  font-size: 1.1rem;
+  margin-bottom: 1rem;
+}
+
+.welcome-buttons {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.secondary-btn {
+  background-color: #47562b;
+  border: 2px solid rgb(13, 14, 1);
+  color: #ffffff;
+}
+
+.secondary-btn:hover {
+  background-color: #1a2703;
+  color: #47562b;
+}
+
+h1,
+h2,
+h3 {
+  color: #556B2F;
+}
+
+button {
+  background-color: #47562b;
+  color: white;
+  border: 2px solid rgb(13, 14, 1);
+  padding: 0.6rem 1.2rem;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 1rem;
+}
+
+button:hover {
+  background-color: #1a2703;
+}
+
+.catalog-card {
+  background-color: white;
+  border-radius: 12px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  padding: 1.5rem;
+  width: 100%;
+  max-width: 320px;
+  transition: transform 0.2s ease;
+}
+
+.catalog-card:hover {
+  transform: scale(1.02);
+}
+
+.auth-card {
+  background-color: white;
+  border-radius: 12px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  padding: 2rem;
+  width: 100%;
+  max-width: 700px;
+  margin: auto;
+  transition: transform 0.2s ease;
+}
+
+.auth-card:hover {
+  transform: scale(1.02);
+}
+
+.metric {
+  font-size: 1.1rem;
+  font-weight: 500;
+  color: #556B2F;
+}
+
+.auth-container,
+.register-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 2rem;
+  background-color: #F9F6F2;
+  min-height: 100vh;
+}
+
+.auth-card h2 {
+  text-align: center;
+  margin-bottom: 1rem;
+  color: #556B2F;
+}
+
+form input,
+form select,
+textarea {
+  width: 100%;
+  padding: 0.8rem;
+  margin-bottom: 1rem;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font-size: 1rem;
+}
+
+.error-text {
+  color: red;
+  font-size: 0.9rem;
+  text-align: center;
+}
+
+.navbar {
+  background-color: #556B2F;
+  color: white;
+  padding: 1rem 2rem;
+  display: grid;
+  grid-template-columns: 1fr auto;
+  align-items: center;
+}
+
+.navbar-title {
+  text-align: center;
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: #F9F6F2;
+  justify-self: center;
+}
+
+.nav-links {
+  justify-self: end;
+}
+
+.nav-links a {
+  color: white;
+  margin-left: 1rem;
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.nav-links a:hover {
+  text-decoration: underline;
+}
+
+.catalog-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 1.5rem;
+}
+
+.auth-card form {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.auth-card button {
+  width: 50%;
+  margin-top: 1rem;
+}
+
+.logout-btn {
+  background-color: #90986a;
+  color: white;
+  border: none;
+  padding: 0.4rem 0.8rem;
+  border-radius: 6px;
+  margin-left: 1rem;
+  cursor: pointer;
+  font-weight: 500;
+}
+
+.logout-btn:hover {
+  background-color: #636d4b;
+}
+
+.footer {
+  background-color: #b9cb9a;
+  color: rgb(26, 42, 7);
+  text-align: center;
+  padding: 1rem;
+  margin-bottom: 2rem;
+  font-size: 0.9rem;
+}
+
+.role-selection {
+  margin-bottom: 1rem;
+  text-align: left;
+}
+
+.role-label {
+  display: block;
+  font-weight: 500;
+  color: #556B2F;
+  margin-bottom: 0.5rem;
+  text-align: left;
+  width: 100%;
+}
+
+.role-row-horizontal {
+  display: flex;
+  gap: 2rem;
+  flex-wrap: wrap;
+  justify-content: flex-start;
+}
+
+.role-option {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-weight: 500;
+  color: #556B2F;
+}
+
+/* ===== Week 2 Additions ===== */
+.goal-form {
+  max-width: 700px;
+  background: #fff;
+  padding: 1.5rem;
+  border-radius: 12px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.08);
+  margin-top: 1rem;
+}
+
+.wizard-actions {
+  display: flex;
+  gap: 1rem;
+  justify-content: flex-end;
+}
+
+.goals-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+  gap: 1.2rem;
+}
+
+.goal-card {
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.08);
+  padding: 1rem 1.2rem;
+}
+
+.goal-row {
+  display: grid;
+  grid-template-columns: 140px 1fr;
+  gap: 0.8rem;
+  align-items: center;
+  margin: 0.4rem 0;
+}
+
+.status-chip {
+  display: inline-block;
+  padding: 0.2rem 0.6rem;
+  border-radius: 999px;
+  background: #e6efd3;
+  color: #254b03;
+  font-weight: 600;
+}
+
+.status-in_progress {
+  background: #f3e2c9;
+  color: #5a3a00;
+}
+
+.status-completed {
+  background: #d8f0d0;
+  color: #1b5e20;
+}
+
+.status-cancelled {
+  background: #f6d1d1;
+  color: #8b0000;
+}
+
+.status-past_due {
+  background: #ffe1b3;
+  color: #7a3e00;
+}
+
+.progress-outer {
+  background: #e9eddc;
+  border-radius: 8px;
+  height: 24px;
+  overflow: hidden;
+  margin: 0.6rem 0;
+  border: 1px solid #c2cda3;
+}
+
+.progress-inner {
+  background: linear-gradient(90deg, #6a8f2b, #b88793);
+  color: #fff;
+  height: 100%;
+  text-align: center;
+  font-weight: bold;
+  line-height: 24px;
+}
+
+.progress-slider {
+  width: 100%;
+  accent-color: #6a8f2b;
+}
+
+.goal-actions {
+  display: flex;
+  gap: 0.6rem;
+  justify-content: flex-end;
+  margin-top: 0.8rem;
+}
