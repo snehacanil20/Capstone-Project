@@ -1,0 +1,25 @@
+package com.certification.dto.response;
+
+import com.certification.model.GoalStatus;
+import lombok.Builder;
+import lombok.Data;
+
+import java.time.LocalDate;
+
+@Data
+@Builder
+public class GoalResponse {
+    private Long id;
+
+    private Long certificationId;
+    private String certificationName;
+    private String certificationAuthority;
+    private String category;
+    private String subcategory;
+    private String approverName;
+
+    private LocalDate targetDate;
+    private String notes;
+    private GoalStatus status;
+    private int progressPercent;
+}
